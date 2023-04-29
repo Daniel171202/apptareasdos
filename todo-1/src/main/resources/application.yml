@@ -1,0 +1,19 @@
+server:
+  port: 9999
+  profiles:
+    active: chaos-monkey
+
+chaos:
+  monkey:
+    enabled: true
+    watcher:
+      service: false
+      controller: false
+      repository: false
+      restController: true
+    assaults:
+      level: 3
+      latencyActive: true
+      latencyRangeStart: 1000
+      latencyRangeEnd: 4000
+      exceptionsActive: true
