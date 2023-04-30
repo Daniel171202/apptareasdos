@@ -5,8 +5,8 @@ import java.util.*;
 public class TaskDto {
     private Integer taskId;
     private String description;
-    private Date date;
-    private List<Integer> labelIds;
+    private String date;
+    private String labelName;
 
     public TaskDto() {
     }
@@ -28,20 +28,20 @@ public class TaskDto {
         this.description = description;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return this.date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
-    public List<Integer> getLabelIds() {
-        return this.labelIds;
+    public String getLabel() {
+        return this.labelName;
     }
 
-    public void setLabelIds(List<Integer> labelIds) {
-        this.labelIds = labelIds;
+    public void setLabel(String label) {
+        this.labelName = label;
     }
 
 
@@ -51,7 +51,7 @@ public class TaskDto {
             " taskId='" + getTaskId() + "'" +
             ", description='" + getDescription() + "'" +
             ", date='" + getDate() + "'" +
-            ", labelIds='" + getLabelIds() + "'" +
+            ", label='" + getLabel() + "'" +
             "}";
     }
 

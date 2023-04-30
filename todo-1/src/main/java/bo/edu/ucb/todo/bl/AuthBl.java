@@ -45,6 +45,7 @@ public class AuthBl {
     }
 
     public boolean validateToken(String token) {
+        System.out.println("Validando token: " + token + "Hata");
         if(token != null && token.startsWith("Bearer ")) {
             token = token.substring(7);
         }

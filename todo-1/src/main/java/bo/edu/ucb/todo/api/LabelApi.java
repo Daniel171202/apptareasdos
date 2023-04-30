@@ -4,6 +4,7 @@ import bo.edu.ucb.todo.bl.AuthBl;
 import bo.edu.ucb.todo.bl.LabelBl;
 import bo.edu.ucb.todo.dto.LabelDto;
 import bo.edu.ucb.todo.dto.ResponseDto;
+import bo.edu.ucb.todo.dto.TokenDto;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -96,7 +97,7 @@ public class LabelApi {
         // Si no existe retornamos un error
         if (label == null) {
             //FIXME: Cambiar el codigo de error debe retornar 404
-            response.setCode("0001");
+            response.setCode("404");
             response.setResponse(null);
             response.setErrorMessage("Label not found");
             return response;
@@ -130,4 +131,34 @@ public class LabelApi {
         response.setResponse("Label created");
         return response;
     }
+    /*
+     * TODO: Implementar el metodo para eliminar una etiqueta por id
+     */
+    @DeleteMapping("/api/v1/label/{idLabel}")
+    public ResponseDto<String> deleteLabelById(@PathVariable Integer idLabel, @RequestHeader("Authorization") String token) {
+        ResponseDto<String> response = new ResponseDto<>();
+        AuthBl authBl = new AuthBl();
+        if (!authBl.validateToken(token)) {
+            response.setCode("0001");
+            response.setResponse(null);
+            response.setErrorMessage("Invalid token");
+            return response;
+        }
+        //Buscamos el elemento en la lista
+        LabelDto label = this.labelBl.getLabelById(idLabel);
+        // Si no existe retornamos un error
+        if (label == null) {
+            response.setCode("0001");
+            response.setResponse(null);
+            response.setErrorMessage("Label not found");
+            return response;
+        } else {
+            this.labelBl.deleteLabelById(idLabel);
+            // Si existe retornamos el elemento
+            response.setCode("0000");
+            response.setResponse("Label deleted");
+            return response;
+        }
+    }
+    
 }
