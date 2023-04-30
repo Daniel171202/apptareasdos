@@ -106,8 +106,17 @@ Widget _complete(BuildContext context, TaskState task, String token) {
     children: [
       const Text('Completado'),
       TextButton(
-          onPressed: () {
-            BlocProvider.of<TasksCubit>(context).changeFinish(task, token);
+          onPressed: () async {
+            TaskState newTask = TaskState(
+              taskId: task.taskId,
+              description: task.description,
+              date: task.date,
+              finish: false,
+              labelName: task.labelName,
+            );
+            await BlocProvider.of<TasksCubit>(context)
+                .updateTask(newTask, token);
+            await BlocProvider.of<TasksCubit>(context).getTasks(token);
           },
           child: const Text('MARCAR COMO PENDIENTE'))
     ],
@@ -120,8 +129,16 @@ Widget _pending(BuildContext context, TaskState task, String token) {
     children: [
       const Text('Pendiente'),
       TextButton(
-        onPressed: () {
-          BlocProvider.of<TasksCubit>(context).changeFinish(task, token);
+        onPressed: () async {
+          TaskState newTask = TaskState(
+            taskId: task.taskId,
+            description: task.description,
+            date: task.date,
+            finish: true,
+            labelName: task.labelName,
+          );
+          await BlocProvider.of<TasksCubit>(context).updateTask(newTask, token);
+          await BlocProvider.of<TasksCubit>(context).getTasks(token);
         },
         child: const Text('COMPLETAR'),
       )

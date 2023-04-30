@@ -22,31 +22,11 @@ class TasksCubit extends Cubit<ListTaskState> {
 
   //Actualizar tarea
   Future<void> updateTask(TaskState task, String token) async {
-    try {
-      TaskState newTask = await TasksServices.updateTask(task, token);
-      final List<TaskState> newTasks = List.from(state.tasks)
-        ..[state.tasks.indexOf(task)] = newTask;
-      emit(ListTaskState(newTasks));
-    } catch (e) {
-      print(e);
-    }
+    await TasksServices.updateTask(task, token);
   }
 
   //Agregar tarea
   Future<void> addTask(TaskState task, String token) async {
     await TasksServices.addTask(task, token);
-  }
-
-  //Cambia el estado de la tarea
-  Future<void> changeFinish(TaskState task, String token) async {
-    try {
-      TaskState newTask = await TasksServices.updateTask(
-          task.copyWith(finish: !task.finish), token);
-      final List<TaskState> newTasks = List.from(state.tasks)
-        ..[state.tasks.indexOf(task)] = newTask;
-      emit(ListTaskState(newTasks));
-    } catch (e) {
-      print(e);
-    }
   }
 }

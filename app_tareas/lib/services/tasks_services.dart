@@ -61,7 +61,7 @@ class TasksServices {
       print(response.body);
       Map responseMap = json.decode(response.body);
       if (responseMap["code"] != "0000") {
-        return TaskState(
+        return const TaskState(
             taskId: -1,
             description: 'Task not found',
             date: 'Error 404',
@@ -83,12 +83,13 @@ class TasksServices {
 
   //Actualiza una tarea
   static Future<TaskState> updateTask(TaskState task, String token) async {
+    print('Task: ${task}');
     Map data = {
       'taskId': task.taskId,
       'description': task.description,
       'date': task.date,
       'label': task.labelName,
-      'finish': task.finish,
+      'done': task.finish,
     };
     var body = json.encode(data);
     var url = Uri.parse(baseUrl + '/task/${task.taskId}');
@@ -96,7 +97,6 @@ class TasksServices {
       url,
       headers: {
         "Content-Type": "application/json",
-        "Accept": "application/json",
         'Authorization': 'Bearer $token'
       },
       body: body,
@@ -105,14 +105,14 @@ class TasksServices {
       print(response.body);
       Map responseMap = json.decode(response.body);
       if (responseMap["code"] != "0000") {
-        return TaskState(
+        return const TaskState(
             taskId: -1,
             description: 'Task not found',
             date: 'Error 404',
             labelName: "Error 404",
             finish: false);
       }
-      TaskState taskData = TaskState.fromMap(responseMap);
+      TaskState taskData = TaskState.fromMap(responseMap['response']);
       return taskData;
     } else {
       print('Error: ${response.statusCode}');

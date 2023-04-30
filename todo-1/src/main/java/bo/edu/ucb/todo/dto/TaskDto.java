@@ -7,7 +7,7 @@ public class TaskDto {
     private String description;
     private String date;
     private String labelName;
-
+    private boolean done;
     public TaskDto() {
     }
 
@@ -43,7 +43,12 @@ public class TaskDto {
     public void setLabel(String label) {
         this.labelName = label;
     }
-
+    public boolean getDone() {
+        return this.done;
+    }
+    public void setDone(boolean done) {
+        this.done = done;
+    }
 
     @Override
     public String toString() {
@@ -52,6 +57,7 @@ public class TaskDto {
             ", description='" + getDescription() + "'" +
             ", date='" + getDate() + "'" +
             ", label='" + getLabel() + "'" +
+            ", done='" + getDone() + "'" +
             "}";
     }
 

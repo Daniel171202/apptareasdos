@@ -20,6 +20,7 @@ class TaskState extends Equatable {
       description: taskMap['description'],
       date: taskMap['date'],
       labelName: taskMap['label'],
+      finish: taskMap['done'],
     );
   }
   copyWith({required bool finish}) {}
