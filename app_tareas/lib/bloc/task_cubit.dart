@@ -23,7 +23,7 @@ class TasksCubit extends Cubit<ListTaskState> {
     if (newTasks.date == 'Error 404') return 'Error 500';
     //Emitir nueva lista de tareas
     List<TaskState> newList = state.tasks;
-    newList[index] = newTasks;
+    newList[index] = task;
     emit(ListTaskState(newList));
     return 'Ok';
   }

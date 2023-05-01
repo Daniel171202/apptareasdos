@@ -129,6 +129,19 @@ Widget _complete(
             );
             String msg = await BlocProvider.of<TasksCubit>(context)
                 .updateTask(newTask, token, index);
+            if (msg == 'Ok') {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Tarea marcada como pendiente'),
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Error al marcar como pendiente'),
+                ),
+              );
+            }
           },
           child: const Text('MARCAR COMO PENDIENTE'))
     ],
@@ -149,8 +162,21 @@ Widget _pending(BuildContext context, TaskState task, String token, int index) {
             finish: true,
             labelName: task.labelName,
           );
-          await BlocProvider.of<TasksCubit>(context)
+          String msg = await BlocProvider.of<TasksCubit>(context)
               .updateTask(newTask, token, index);
+          if (msg == 'Ok') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Tarea marcada como completada'),
+              ),
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Error al marcar como completada'),
+              ),
+            );
+          }
         },
         child: const Text('COMPLETAR'),
       )

@@ -1,6 +1,7 @@
 package bo.edu.ucb.todo.api;
 import java.util.*;
 
+import org.springframework.context.annotation.Description;
 import org.springframework.web.bind.annotation.*;
 import bo.edu.ucb.todo.dto.*;
 import bo.edu.ucb.todo.bl.*;
@@ -87,7 +88,7 @@ class TodoApi {
         }
         //Buscamos el elemento en la lista
         TaskDto task = tasks.stream()
-                .filter(t -> t.getTaskId().equals(idTask))
+                .filter(t -> t.getDescription().equals(newTask.getDescription()))
                 .findFirst()
                 .orElse(null);
         // Si no existe retornamos un error
