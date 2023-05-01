@@ -17,10 +17,9 @@ class LabelPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: Center(
-        child: BlocBuilder<LabelsCubit, ListLabelState>(
+        child: BlocBuilder<LabelsAuxCubit, ListLabelAuxState>(
           builder: (context, state) {
             final labels = state.labels;
-
             final List<TextEditingController> controllers = [];
             for (int i = 0; i < labels.length; i++) {
               controllers.add(TextEditingController());
@@ -68,21 +67,12 @@ class LabelPage extends StatelessWidget {
                                               ),
                                               TextButton(
                                                   onPressed: () async {
-                                                    //Borrar etiqueta
-                                                    await BlocProvider.of<
-                                                                LabelsCubit>(
-                                                            context)
-                                                        .deleteLabel(
-                                                            labels[index].id,
-                                                            tokenState
-                                                                .authToken);
-                                                    //Actualizar lista de etiquetas
+                                                    //Borrar sin guardar
                                                     BlocProvider.of<
-                                                                LabelsCubit>(
+                                                                LabelsAuxCubit>(
                                                             context)
-                                                        .getLabels(tokenState
-                                                            .authToken);
-                                                    controllers.removeAt(index);
+                                                        .deleteLabelNoEmit(
+                                                            labels[index]);
                                                   },
                                                   child:
                                                       const Icon(Icons.delete))
@@ -102,82 +92,60 @@ class LabelPage extends StatelessWidget {
                       ),
                       ElevatedButton(
                           onPressed: () async {
-                            //Agregar label vacio
-                            await BlocProvider.of<LabelsCubit>(context)
-                                .addLabel(LabelState(id: 0, name: ''),
-                                    tokenState.authToken);
-                            //Actualizar lista de labels
-                            BlocProvider.of<LabelsCubit>(context)
-                                .getLabels(tokenState.authToken);
+                            BlocProvider.of<LabelsAuxCubit>(context)
+                                .addLabelNoEmit(LabelState(id: 0, name: ''));
                           },
                           child: const Text('NUEVO')),
                       ElevatedButton(
                           onPressed: () async {
-                            //Verificar que no haya etiquetas vacias
-                            bool vacio = false;
-                            labels.forEach((element) {
-                              if (controllers[labels.indexOf(element)].text ==
-                                  '') {
-                                vacio = true;
+                            bool save = true;
+                            //Verificar que ningun controlador este vacio
+                            for (int i = 0; i < controllers.length; i++) {
+                              if (controllers[i].text.isEmpty) {
+                                save = false;
+                                break;
                               }
-                            });
-                            if (vacio) {
+                            }
+                            if (!save) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                       content: Text(
-                                          'No puede haber etiquetas vacias')));
+                                          'No se puede guardar una etiqueta vacia')));
                             } else {
-                              //Actualizar labels
+                              List<LabelState> newLabels = [];
+                              //Guardar etiquetas
                               for (int i = 0; i < labels.length; i++) {
-                                await BlocProvider.of<LabelsCubit>(context)
-                                    .updateLabel(
-                                        LabelState(
-                                            id: labels[i].id,
-                                            name: controllers[i].text),
-                                        tokenState.authToken);
+                                newLabels.add(LabelState(
+                                    id: labels[i].id,
+                                    name: controllers[i].text));
                               }
-                              //Actualizar lista auxiliar de labels
-                              BlocProvider.of<LabelsAuxCubit>(context)
-                                  .getLabels(tokenState.authToken);
-                              //Mostrar mensaje de exito
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Etiquetas actualizadas')));
-                              //Actualizar la lista de labels
-                              BlocProvider.of<LabelsCubit>(context)
-                                  .getLabels(tokenState.authToken);
-                              //Volver a la pagina anterior
-                              Navigator.of(context).pop();
+                              //Actualizar lista de etiquetas
+                              String msg =
+                                  await BlocProvider.of<LabelsCubit>(context)
+                                      .replaceAllLabels(
+                                          newLabels, tokenState.authToken);
+
+                              if (msg == 'Ok') {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Se actualizo las etiquetas')));
+                                //Salir de la pagina
+                                Navigator.of(context).pop();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'No se pudo actualizar las etiquetas')));
+                              }
                             }
                           },
                           child: const Text('GUARDAR')),
-                      BlocBuilder<LabelsAuxCubit, ListLabelState>(
-                        builder: (context, auxState) {
-                          return ElevatedButton(
-                              onPressed: () async {
-                                for (int i = 0; i < labels.length; i++) {
-                                  await BlocProvider.of<LabelsCubit>(context)
-                                      .deleteLabel(
-                                          labels[i].id, tokenState.authToken);
-                                }
-                                for (int i = 0;
-                                    i < auxState.labels.length;
-                                    i++) {
-                                  await BlocProvider.of<LabelsCubit>(context)
-                                      .addLabel(
-                                          LabelState(
-                                              id: 0,
-                                              name: auxState.labels[i].name),
-                                          tokenState.authToken);
-                                }
-                                BlocProvider.of<LabelsCubit>(context)
-                                    .getLabels(tokenState.authToken);
-                                //Salir de la pagina
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('CERRAR'));
-                        },
-                      )
+                      ElevatedButton(
+                          onPressed: () async {
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('CERRAR'))
                     ],
                   );
                 },

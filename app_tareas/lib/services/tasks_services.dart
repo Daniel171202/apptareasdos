@@ -40,50 +40,15 @@ class TasksServices {
         TaskState(
             taskId: -1,
             description: '${response.statusCode}',
-            date: 'Error 404',
-            labelName: "Error 404",
+            date: 'Error 500',
+            labelName: "Error 500",
             finish: false)
       ];
     }
   }
 
-  //Obtiene una tarea por id
-  static Future<TaskState> getTaskById(int id, String token) async {
-    var url = Uri.parse(baseUrl + '/task/$id');
-    http.Response response = await http.get(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $token'
-      },
-    );
-    if (response.statusCode == 200) {
-      print(response.body);
-      Map responseMap = json.decode(response.body);
-      if (responseMap["code"] != "0000") {
-        return const TaskState(
-            taskId: -1,
-            description: 'Task not found',
-            date: 'Error 404',
-            labelName: "Error 404",
-            finish: false);
-      }
-      TaskState task = TaskState.fromMap(responseMap);
-      return task;
-    } else {
-      print('Error: ${response.statusCode}');
-      return TaskState(
-          taskId: -1,
-          description: '${response.statusCode}',
-          date: 'Error 404',
-          labelName: "Error 404",
-          finish: false);
-    }
-  }
-
   //Actualiza una tarea
   static Future<TaskState> updateTask(TaskState task, String token) async {
-    print('Task: ${task}');
     Map data = {
       'taskId': task.taskId,
       'description': task.description,
@@ -102,7 +67,6 @@ class TasksServices {
       body: body,
     );
     if (response.statusCode == 200) {
-      print(response.body);
       Map responseMap = json.decode(response.body);
       if (responseMap["code"] != "0000") {
         return const TaskState(
@@ -115,7 +79,6 @@ class TasksServices {
       TaskState taskData = TaskState.fromMap(responseMap['response']);
       return taskData;
     } else {
-      print('Error: ${response.statusCode}');
       return TaskState(
           taskId: -1,
           description: '${response.statusCode}',
@@ -151,10 +114,10 @@ class TasksServices {
       if (responseMap["code"] == "0000") {
         return 'Task added';
       } else {
-        return 'Error:  404';
+        return 'Error 404';
       }
     } else {
-      return 'Error:  404';
+      return 'Error 404';
     }
   }
 }

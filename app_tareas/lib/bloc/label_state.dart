@@ -25,11 +25,27 @@ class LabelState extends Equatable {
       name: name,
     );
   }
+
+  //Metodo Map
+  Map<String, dynamic> toMap() {
+    return {
+      'labelId': id,
+      'name': name,
+    };
+  }
 }
 
 class ListLabelState {
   final List<LabelState> labels;
   ListLabelState(
+    List<LabelState> newLabels, {
+    List<LabelState>? labels,
+  }) : labels = newLabels;
+}
+
+class ListLabelAuxState {
+  final List<LabelState> labels;
+  ListLabelAuxState(
     List<LabelState> newLabels, {
     List<LabelState>? labels,
   }) : labels = newLabels;

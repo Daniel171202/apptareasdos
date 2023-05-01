@@ -1,21 +1,22 @@
 import 'package:app_tareas/bloc/label_state.dart';
-import 'package:app_tareas/services/label_services.dart';
 import 'package:bloc/bloc.dart';
 
-class LabelsAuxCubit extends Cubit<ListLabelState> {
-  final String token;
-  //Constructor con getLabels
-  LabelsAuxCubit(this.token) : super(ListLabelState([])) {
-    getLabels(token);
-  }
-  //Obtener etiquetas
-  void getLabels(String token) async {
-    List<LabelState> labels = await LabelServices.getLabels(token);
-    emit(ListLabelState(labels));
+class LabelsAuxCubit extends Cubit<ListLabelAuxState> {
+  LabelsAuxCubit() : super(ListLabelAuxState([]));
+  //Obtener etiquetas sin emitir
+  void getLabelsNoEmit(List<LabelState> labels) async {
+    emit(ListLabelAuxState(labels));
   }
 
-  //Eliminar todas las etiquetas
-  Future<void> deleteAllLabels() async {
-    emit(ListLabelState([]));
+  //Agregar etiqueta sin emitir
+  void addLabelNoEmit(LabelState label) async {
+    final List<LabelState> newLabels = List.from(state.labels)..add(label);
+    emit(ListLabelAuxState(newLabels));
+  }
+
+  //Eliminar etiqueta sin emitir
+  void deleteLabelNoEmit(LabelState label) async {
+    final List<LabelState> newLabels = List.from(state.labels)..remove(label);
+    emit(ListLabelAuxState(newLabels));
   }
 }

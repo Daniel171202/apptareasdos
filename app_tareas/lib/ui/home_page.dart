@@ -1,4 +1,6 @@
+import 'package:app_tareas/bloc/label_aux_cubit.dart';
 import 'package:app_tareas/bloc/label_cubit.dart';
+import 'package:app_tareas/bloc/label_state.dart';
 import 'package:app_tareas/bloc/task_cubit.dart';
 import 'package:app_tareas/bloc/task_state.dart';
 import 'package:app_tareas/bloc/token_cubit.dart';
@@ -14,52 +16,62 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<TokenCubit, TokenState>(
       builder: (context, tokenState) {
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text("TODO APP"),
-            centerTitle: true,
-          ),
-          body: BlocBuilder<TasksCubit, ListTaskState>(
-            builder: (context, taskState) {
-              final items = taskState.tasks;
-              return items.isEmpty
-                  ? const Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: Center(child: Text('No hay tareas registradas')),
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          SizedBox(
-                            height: 400,
-                            width: 300,
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.vertical,
-                              child: ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemCount: items.length,
-                                itemBuilder: (context, index) {
-                                  return _itemTask(context, items[index], index,
-                                      tokenState.authToken);
-                                },
+        return BlocBuilder<LabelsCubit, ListLabelState>(
+          builder: (context, labelState) {
+            return Scaffold(
+              appBar: AppBar(
+                title: const Text("TODO APP"),
+                centerTitle: true,
+              ),
+              body: BlocBuilder<TasksCubit, ListTaskState>(
+                builder: (context, taskState) {
+                  final items = taskState.tasks;
+                  return items.isEmpty
+                      ? const Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child:
+                              Center(child: Text('No hay tareas registradas')),
+                        )
+                      : Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 400,
+                                width: 300,
+                                child: SingleChildScrollView(
+                                  scrollDirection: Axis.vertical,
+                                  child: ListView.builder(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    itemCount: items.length,
+                                    itemBuilder: (context, index) {
+                                      return _itemTask(context, items[index],
+                                          index, tokenState.authToken);
+                                    },
+                                  ),
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
-                      ),
-                    );
-            },
-          ),
-          floatingActionButton: FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => const TaskPage(),
-              ));
-            },
-          ),
+                        );
+                },
+              ),
+              floatingActionButton: FloatingActionButton(
+                child: const Icon(Icons.add),
+                onPressed: () {
+                  //Obtener los labels para mostrarlos en el dropdown
+                  BlocProvider.of<LabelsCubit>(context)
+                      .getLabels(tokenState.authToken);
+                  //Ir a la página de creación de tareas
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const TaskPage(),
+                  ));
+                },
+              ),
+            );
+          },
         );
       },
     );
@@ -89,8 +101,8 @@ Widget _itemTask(
             child: Column(
               children: [
                 task.finish
-                    ? _complete(context, task, token)
-                    : _pending(context, task, token)
+                    ? _complete(context, task, token, index)
+                    : _pending(context, task, token, index)
               ],
             ),
           )
@@ -100,7 +112,8 @@ Widget _itemTask(
   );
 }
 
-Widget _complete(BuildContext context, TaskState task, String token) {
+Widget _complete(
+    BuildContext context, TaskState task, String token, int index) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -114,16 +127,15 @@ Widget _complete(BuildContext context, TaskState task, String token) {
               finish: false,
               labelName: task.labelName,
             );
-            await BlocProvider.of<TasksCubit>(context)
-                .updateTask(newTask, token);
-            await BlocProvider.of<TasksCubit>(context).getTasks(token);
+            String msg = await BlocProvider.of<TasksCubit>(context)
+                .updateTask(newTask, token, index);
           },
           child: const Text('MARCAR COMO PENDIENTE'))
     ],
   );
 }
 
-Widget _pending(BuildContext context, TaskState task, String token) {
+Widget _pending(BuildContext context, TaskState task, String token, int index) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -137,8 +149,8 @@ Widget _pending(BuildContext context, TaskState task, String token) {
             finish: true,
             labelName: task.labelName,
           );
-          await BlocProvider.of<TasksCubit>(context).updateTask(newTask, token);
-          await BlocProvider.of<TasksCubit>(context).getTasks(token);
+          await BlocProvider.of<TasksCubit>(context)
+              .updateTask(newTask, token, index);
         },
         child: const Text('COMPLETAR'),
       )

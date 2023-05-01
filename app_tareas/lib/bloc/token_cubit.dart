@@ -2,8 +2,9 @@
 import 'package:app_tareas/bloc/token_state.dart';
 import 'package:bloc/bloc.dart';
 import '../services/auth_services.dart';
-import 'login_state.dart';
 import 'package:flutter/material.dart';
+
+import 'login_state.dart';
 
 class TokenCubit extends Cubit<TokenState> {
   TokenCubit() : super(const TokenState());

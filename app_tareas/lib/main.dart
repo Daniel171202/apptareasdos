@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget {
       BlocProvider<TokenCubit>(create: (context) => TokenCubit()),
       BlocProvider<TasksCubit>(create: (context) => TasksCubit()),
       BlocProvider<LabelsCubit>(create: (context) => LabelsCubit('')),
-      BlocProvider<LabelsAuxCubit>(create: (context) => LabelsAuxCubit('')),
+      BlocProvider<LabelsAuxCubit>(create: (context) => LabelsAuxCubit()),
       BlocProvider<LabelSelectCubit>(
           create: (context) => LabelSelectCubit(LabelState(id: 0, name: '')))
     ], child: const MaterialApp(home: LoginPage()));

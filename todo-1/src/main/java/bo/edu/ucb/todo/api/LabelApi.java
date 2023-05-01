@@ -117,7 +117,8 @@ public class LabelApi {
      * @return Retorna un mensaje: "Label createed" o error en su defecto.
      */
     @PostMapping("/api/v1/label")
-    public ResponseDto<String> createLabel(@RequestBody LabelDto label, @RequestHeader("Authorization") String token) {
+    public ResponseDto<String> replaceAllLabels(@RequestBody List<LabelDto> labels, @RequestHeader("Authorization") String token) {
+        System.out.println("LABELS: "+labels);
         ResponseDto<String> response = new ResponseDto<>();
         AuthBl authBl = new AuthBl();
         if (!authBl.validateToken(token)) {
@@ -126,9 +127,9 @@ public class LabelApi {
             response.setErrorMessage("Invalid token");
             return response;
         }
-        this.labelBl.createLabel(label);
+        this.labelBl.replaceAllLabels(labels);
         response.setCode("0000");
-        response.setResponse("Label created");
+        response.setResponse("Labels created");
         return response;
     }
     /*
@@ -160,5 +161,6 @@ public class LabelApi {
             return response;
         }
     }
+    
     
 }

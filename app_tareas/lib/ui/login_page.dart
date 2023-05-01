@@ -55,14 +55,19 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
               TextButton(
-                onPressed: () {
+                onPressed: () async {
+                  //Intento de login
                   BlocProvider.of<TokenCubit>(context).login(LoginUserState(
                       user: userController.text,
                       password: passwordController.text));
-                  BlocProvider.of<TokenCubit>(context).stream.listen((state) {
+                  //Verificar si el login fue exitoso
+                  BlocProvider.of<TokenCubit>(context)
+                      .stream
+                      .listen((state) async {
                     if (state is TokenState) {
                       if (state.authToken == "error 404" ||
                           state.authToken == 'Error de autenticación') {
+                        //Login fallido
                         state.authToken == "error 404"
                             ? ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
@@ -73,14 +78,14 @@ class LoginPage extends StatelessWidget {
                                 content: Text('Error de autenticación'),
                               ));
                       } else {
-                        BlocProvider.of<LabelsCubit>(context)
-                            .getLabels(state.authToken);
-                        BlocProvider.of<TasksCubit>(context)
+                        //Login exitoso'
+                        //Obtener las tareas
+                        await BlocProvider.of<TasksCubit>(context)
                             .getTasks(state.authToken);
+                        //Ir a la pagina de tareas
                         Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => const HomePage(),
                         ));
-                        //Navigator.of(context).pop();
                       }
                     }
                   });

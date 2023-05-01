@@ -33,109 +33,30 @@ class LabelServices {
     }
   }
 
-  //Obtiene una etiqueta por id
-  static Future<LabelState> getLabel(int id, String token) async {
-    var url = Uri.parse(baseUrl + '/label/$id');
-    http.Response response = await http.get(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $token'
-      },
-    );
-    if (response.statusCode == 200) {
-      print(response.body);
-      Map responseMap = json.decode(response.body);
-      if (responseMap["code"] != "0000") {
-        return LabelState(id: -1, name: 'Label not found');
-      }
-      LabelState label = LabelState.fromMap(responseMap);
-      return label;
-    } else {
-      print('Error: ${response.statusCode}');
-      return LabelState(id: -1, name: 'Error 404');
-    }
-  }
-
-  //Actualiza una etiqueta
-  static Future<LabelState> updateLabel(
-      LabelState newLabel, String token) async {
-    Map data = {
-      'labelId': newLabel.id,
-      'name': newLabel.name,
-    };
-    var body = json.encode(data);
-    var url = Uri.parse(baseUrl + '/label/${newLabel.id}');
-    http.Response response = await http.put(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $token'
-      },
-      body: body,
-    );
-    if (response.statusCode == 200) {
-      print(response.body);
-      Map responseMap = json.decode(response.body);
-      if (responseMap["code"] != "0000") {
-        return LabelState(id: -1, name: 'Label not found');
-      }
-      LabelState label = LabelState.fromMap(responseMap);
-      return label;
-    } else {
-      print('Error: ${response.statusCode}');
-      return LabelState(id: -1, name: 'Error 404');
-    }
-  }
-
-  //Agrega una etiqueta
-  static Future<String> createLabel(LabelState label, String token) async {
+  //Actualizar todas las etiquetas
+  static Future<String> updateAllLabels(
+      List<LabelState> labels, String token) async {
+    print("LABELS: $labels");
     var url = Uri.parse(baseUrl + '/label');
-    Map data = {
-      'labelId': label.id,
-      'name': label.name,
-    };
-    var body = json.encode(data);
-    http.Response response = await http.post(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $token'
-      },
-      body: body,
-    );
+    List<Map> labelsMap = [];
+    for (var label in labels) {
+      labelsMap.add(label.toMap());
+    }
+    var body = json.encode(labelsMap);
+    http.Response response = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+          'Authorization': 'Bearer $token'
+        },
+        body: body);
     if (response.statusCode == 200) {
-      print(response.body);
       Map responseMap = json.decode(response.body);
       if (responseMap["code"] != "0000") {
         return 'Error 404';
       }
-      return 'Label created';
+      return 'Labels updated';
     } else {
-      print('Error: ${response.statusCode}');
-      return 'Error 404';
-    }
-  }
-
-  //Elimina una etiqueta por id
-  static Future<String> deleteLabel(int id, String token) async {
-    var url = Uri.parse(baseUrl + '/label/$id');
-    http.Response response = await http.delete(
-      url,
-      headers: {
-        "Content-Type": "application/json",
-        'Authorization': 'Bearer $token'
-      },
-    );
-    if (response.statusCode == 200) {
-      print(response.body);
-      Map responseMap = json.decode(response.body);
-      if (responseMap["code"] != "0000") {
-        return 'Label not found';
-      }
-      return 'Etiqueta eliminada';
-    } else {
-      return 'Error 404';
+      return 'Error 500';
     }
   }
 }

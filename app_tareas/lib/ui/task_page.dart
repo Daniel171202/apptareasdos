@@ -111,10 +111,10 @@ class TaskPage extends StatelessWidget {
                                   select = null;
                                   idLabel = null;
                                   //Crear lista auxiliar para guardar las etiquetas seleccionadas
-                                  BlocProvider.of<LabelsAuxCubit>(context)
-                                      .getLabels(tokenState.authToken);
                                   BlocProvider.of<LabelSelectCubit>(context)
                                       .selectLabel(LabelState(id: 0, name: ''));
+                                  BlocProvider.of<LabelsAuxCubit>(context)
+                                      .getLabelsNoEmit(state.labels);
                                   Navigator.of(context).push(PageRouteBuilder(
                                     pageBuilder: (context, animation,
                                             secondaryAnimation) =>
@@ -146,21 +146,27 @@ class TaskPage extends StatelessWidget {
                                     nameController != "") {
                                   //Verificar que se haya seleccionado una etiqueta
                                   if (select != null) {
+                                    //Guardado de la tarea
                                     TaskState task = TaskState(
                                         date: dateController.text,
                                         labelName: select!,
                                         description: nameController.text,
                                         taskId: 0);
-                                    await BlocProvider.of<TasksCubit>(context)
+                                    String msg = await BlocProvider.of<
+                                            TasksCubit>(context)
                                         .addTask(task, tokenState.authToken);
-                                    //Actualizar la lista de tareas
-                                    BlocProvider.of<TasksCubit>(context)
-                                        .getTasks(tokenState.authToken);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Tarea registrada con exito')));
-                                    Navigator.of(context).pop();
+                                    if (msg == 'Ok') {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'Tarea registrada con exito')));
+                                      Navigator.of(context).pop();
+                                    } else {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                              content: Text(
+                                                  'Error al registrar la tarea')));
+                                    }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(

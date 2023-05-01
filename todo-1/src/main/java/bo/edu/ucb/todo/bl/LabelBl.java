@@ -64,4 +64,10 @@ public class LabelBl {
         labels.remove(label);
         return label;
     }
+    //Remplazamos todos los elementos de la lista por una nueva lista
+    public void replaceAllLabels(List<LabelDto> newLabels) {
+        System.out.println("LABELS: "+newLabels);
+        labels.clear();
+        labels.addAll(newLabels);
+    }
 }
