@@ -23,4 +23,15 @@ class AuthApi {
         }
         return response;
     }
+    //Endpoint de un get que te devuelve un Hola mundo
+    @GetMapping("/api/v1/auth/hello")
+    public ResponseDto<String> hello() {
+        ResponseDto<String> response = new ResponseDto<>();
+
+            response.setCode("0000");
+            response.setResponse("Hello gei");
+        return response;
+    }
+
+    
 }

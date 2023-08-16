@@ -1,10 +1,15 @@
 server:
-    port: 8080
+    port: 8082
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 chaos:
   monkey:
