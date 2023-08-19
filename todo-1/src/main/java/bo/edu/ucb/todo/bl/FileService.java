@@ -27,19 +27,6 @@ public class FileService {
             throw new RuntimeException("No se pudo almacenar el archivo. Error: " + e.getMessage());
         }
     }
-    // Función para descargar un archivo
-    public FileDto downloadFile(String fileName) {
-        Path uploadDirectory = Paths.get("C:\\Users\\Administrator\\Documents\\GitHub\\apptareasdos\\todo-1\\src\\main\\fotingos");
-        Path filePath = uploadDirectory.resolve(fileName);
-        try {
-            byte[] fileContent = Files.readAllBytes(filePath);
-            FileDto fileDto = new FileDto();
-            fileDto.setName(fileName);
-            fileDto.setContent(fileContent);
-            return fileDto;
-        } catch (IOException e) {
-            throw new RuntimeException("No se pudo descargar el archivo. Error: " + e.getMessage());
-        }
-
-    }
+   
+    
 }
