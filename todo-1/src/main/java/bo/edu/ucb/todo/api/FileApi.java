@@ -23,4 +23,11 @@ class FileApi {
         return responseDto;
     }
 
+    @GetMapping(path = "/downloadFile/{fileName}")
+    public FileDto downloadFile(@PathVariable String fileName) {
+        FileService fileBl = new FileService();
+        FileDto fileDto = fileBl.downloadFile(fileName);
+        return fileDto;
+    }
+
 }
