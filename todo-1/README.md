@@ -27,3 +27,6 @@ Para ejecutar en modo Chaos Engeenerin se de invocar de la siguiente manera:
 ```bash
 ./mvnw clean package spring-boot:run -Dspring-boot.run.profiles=chaos-monkey
 ```
+: Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed: org.springframework.web.multipart.MultipartException: Current request is not a multipart request] with root cause
+
+org.springframework.web.multipart.MultipartException: Current request is not a multipart request
